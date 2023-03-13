@@ -13,7 +13,7 @@ public class DataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseSqlServer();
+        
     }
 
     public DbSet<MetaItem> MetaItems { get; set; }

@@ -1,6 +1,7 @@
 using Azure.Storage.Blobs;
 using CatalogService.Data;
 using CatalogService.Services;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Database EF
-builder.Services.AddDbContext<DataContext>();
+builder.Services.AddDbContext<DataContext>(option =>
+    option.UseSqlServer(builder.Configuration.GetConnectionString("CatalogDb"), 
+        options => options.EnableRetryOnFailure()));
 
 //eigene Service
 builder.Services.AddScoped<IMetaService, MetaService>();
@@ -31,17 +34,16 @@ builder.Services.AddOutputCache(options =>
 var options = new ConfigurationOptions
 {
     AbortOnConnectFail = false,
-    EndPoints = { "indexcatalog.redis.cache.windows.net:6380" },
-    Password = "8YxMIbahe5bbNs3LcdAv33oldIqNi5lZBAzCaA7RndE=",
+    EndPoints = { builder.Configuration["Redis:EndPoint"] ?? string.Empty },
+    Password = builder.Configuration["Redis:Password"],
     Ssl = true
 };
 
 var multiplexer = ConnectionMultiplexer.Connect(options);
 builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 
-
 //Azure Storage Account
-builder.Services.AddScoped(_ => { return new BlobServiceClient("DefaultEndpointsProtocol=https;AccountName=indexcataglogstore;AccountKey=CkYWZ8ycpd/Qbc9zkLFFBDIWOUzYjzlCDlWiwBkxYamKdtDLRs64PkM11AbNfJsSRgpXkQXBcFxm+AStq5ZT2A==;EndpointSuffix=core.windows.net"); });
+builder.Services.AddScoped(_ => new BlobServiceClient(builder.Configuration["AzureStorage:Connection"]));
 builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();

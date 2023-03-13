@@ -6,7 +6,6 @@ public class FranchiseService : IFranchiseService
 {
     public async Task<IEnumerable<Franchise>> FindAll()
     {
-    
         throw new NotImplementedException();
     }
 
