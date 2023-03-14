@@ -120,7 +120,7 @@ public class MetaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Guid>> Post(Guid id)
+    public async Task<ActionResult<Guid>> Delete(Guid id)
     {
         try
         {

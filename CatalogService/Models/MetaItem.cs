@@ -12,9 +12,8 @@ public class MetaItem : BaseEntity
     [StringLength(1023)]
     public string? Description { get; set; }
     
-    
     public DateTime? Release { get; set; }
     public Franchise? Franchise { get; set; }
 
-    public Guid FileContainerId { get; set; }
+    public Guid? FileContainerId { get; set; }
 }
