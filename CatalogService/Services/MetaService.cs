@@ -44,8 +44,13 @@ public class MetaService : IMetaService
     public async Task<Guid?> Delete(Guid id)
     {
         var metaItem = await Find(id);
-        var item = _context.MetaItems.Remove(metaItem);
-        await _context.SaveChangesAsync();
-        return item.Entity?.Id;
+        if (metaItem != null)
+        {
+            var item = _context.MetaItems.Remove(metaItem);
+            await _context.SaveChangesAsync();
+            return item.Entity?.Id;
+        }
+
+        return null;
     }
 }
