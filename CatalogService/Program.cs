@@ -1,4 +1,5 @@
 using Azure.Storage.Blobs;
+using CatalogService.Caching;
 using CatalogService.Data;
 using CatalogService.Services;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,7 @@ var options = new ConfigurationOptions
 
 var multiplexer = ConnectionMultiplexer.Connect(options);
 builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+builder.Services.AddSingleton<ICacheService, RedisCacheService>();
 
 //Azure Storage Account
 builder.Services.AddScoped(_ => new BlobServiceClient(builder.Configuration["AzureStorage:Connection"]));

@@ -26,23 +26,13 @@ public class MetaController : ControllerBase
     }
 
     [HttpGet]
-    [OutputCache(Duration = 60 * 10, PolicyName = "MetaAll")]
+    [OutputCache]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<MetaItem>>> Get()
     {
         try
         {
-            //redis cache
-            var db = _redis.GetDatabase();
-            var redisValue = await db.StringGetAsync("MetaAll");
-
-            if (redisValue.HasValue)
-            {
-                var redisMetaItems = JsonSerializer.Deserialize<List<MetaItem>>(redisValue!);
-                return Ok(redisMetaItems);
-            }
-
             //database
             var metaItems = await _metaService.FindAll();
             if (metaItems.Any()) return Ok(metaItems);
@@ -58,7 +48,6 @@ public class MetaController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [OutputCache(Duration = 60 * 10, VaryByQueryKeys = new[] { "id" })]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
