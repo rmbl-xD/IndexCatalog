@@ -34,7 +34,7 @@ public class MetaService : IMetaService
         return item.Entity.Id;
     }
 
-    public async Task<Guid> Update(MetaItem metaItem)
+    public async Task<Guid> Update(Guid id, MetaItem metaItem)
     {
         var item = _context.MetaItems.Update(metaItem);
         await _context.SaveChangesAsync();
@@ -44,13 +44,11 @@ public class MetaService : IMetaService
     public async Task<Guid?> Delete(Guid id)
     {
         var metaItem = await Find(id);
-        if (metaItem != null)
-        {
-            var item = _context.MetaItems.Remove(metaItem);
-            await _context.SaveChangesAsync();
-            return item.Entity?.Id;
-        }
-
-        return null;
+        
+        if (metaItem == null) return null;
+        
+        var item = _context.MetaItems.Remove(metaItem);
+        await _context.SaveChangesAsync();
+        return item.Entity?.Id;
     }
 }

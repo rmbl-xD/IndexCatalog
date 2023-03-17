@@ -101,12 +101,12 @@ public class MetaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Guid>> Put(Guid id, [FromBody] MetaItem metaItem)
+    public async Task<ActionResult<Guid>> Put(Guid metaItemId, [FromBody] MetaItem metaItem)
     {
         try
         {
-            var metaItemId = await _metaService.Update(metaItem);
-            return Ok(metaItemId);
+            var id = await _metaService.Update(metaItemId, metaItem);
+            return Ok(id);
         }
         catch (Exception e)
         {
@@ -115,17 +115,17 @@ public class MetaController : ControllerBase
         }
     }
     
-    [HttpDelete("{id}")]
+    [HttpDelete("{metaItemId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Guid>> Delete(Guid id)
+    public async Task<ActionResult<Guid>> Delete(Guid metaItemId)
     {
         try
         {
-            var metaItemId = await _metaService.Delete(id);
-            return Ok(metaItemId);
+            var id = await _metaService.Delete(metaItemId);
+            return Ok(id);
         }
         catch (Exception e)
         {

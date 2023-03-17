@@ -29,21 +29,12 @@ public class ImageController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Get(string id)
+    public async Task<IActionResult> Get(Guid metaItemId, Guid id)
     {
-        if (string.IsNullOrWhiteSpace(id)) return BadRequest();
-        
         try
         {
-            var imageFileStream = await _imageService.Find(id);
-
-            var fileType = "jpeg";
-            if (id.Contains("png"))
-            {
-                fileType = "png";
-            }
-
-            return File(imageFileStream, $"image/{fileType}");
+            var imageFileStream = await _imageService.Find(metaItemId, id);
+            return File(imageFileStream, $"image/jpg");
         }
         catch (Exception e)
         {
@@ -55,11 +46,11 @@ public class ImageController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Upload([FromForm] FileModel file)
+    public async Task<IActionResult> Upload(Guid metaItemId, [FromForm] FileModel file)
     {
         try
         {
-            await _imageService.Upload(file);
+            await _imageService.Upload(metaItemId, file);
             return Ok("success");
         }
         catch (Exception e)

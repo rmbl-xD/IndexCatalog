@@ -48,10 +48,8 @@ public class FranchiseController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Franchise>> Get(string id)
+    public async Task<ActionResult<Franchise>> Get(Guid id)
     {
-        if (string.IsNullOrWhiteSpace(id)) return BadRequest();
-        
         try
         {
             var franchise = await _franchiseService.Find(id);
@@ -64,4 +62,61 @@ public class FranchiseController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+    
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<Guid>> Post([FromBody] Franchise franchise)
+    {
+        try
+        {
+            var id = await _franchiseService.Create(franchise);
+            return Ok(id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical(e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpPut("{franchiseId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<Guid>> Put(Guid franchiseId, [FromBody] Franchise franchise)
+    {
+        try
+        {
+            var id = await _franchiseService.Update(franchiseId, franchise);
+            return Ok(id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical(e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpDelete("{franchiseId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<Guid>> Delete(Guid franchiseId)
+    {
+        try
+        {
+            var id = await _franchiseService.Delete(franchiseId);
+            return Ok(id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical(e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
 }

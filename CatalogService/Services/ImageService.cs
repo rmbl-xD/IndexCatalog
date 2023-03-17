@@ -14,11 +14,11 @@ public class ImageService : IImageService
         _blobServiceClient = blobServiceClient;
     }
 
-    public async Task Upload(FileModel fileModel)
+    public async Task Upload(Guid metaItemId, FileModel fileModel)
     {
         try
         {
-            var container = _blobServiceClient.GetBlobContainerClient("images");
+            var container = _blobServiceClient.GetBlobContainerClient($"images/{metaItemId}");
             var blobInstance = container.GetBlobClient(fileModel.ImageFile.FileName);
             await blobInstance.UploadAsync(fileModel.ImageFile.OpenReadStream());
         }
@@ -28,12 +28,12 @@ public class ImageService : IImageService
         }
     }
 
-    public async Task<Stream?> Find(string id)
+    public async Task<Stream?> Find(Guid metaItemId, Guid id)
     {
         try
         {
-            var container = _blobServiceClient.GetBlobContainerClient("images");
-            var blobInstance = container.GetBlobClient(id);
+            var container = _blobServiceClient.GetBlobContainerClient($"images/{metaItemId}");
+            var blobInstance = container.GetBlobClient(id.ToString());
             var downloadContent = await blobInstance.DownloadAsync();
             return downloadContent.Value.Content;
         }
