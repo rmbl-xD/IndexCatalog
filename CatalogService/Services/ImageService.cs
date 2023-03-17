@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using CatalogService.Models;
 
 namespace CatalogService.Services;
@@ -18,8 +19,22 @@ public class ImageService : IImageService
     {
         try
         {
-            var container = _blobServiceClient.GetBlobContainerClient($"images/{metaItemId}");
-            var blobInstance = container.GetBlobClient(fileModel.ImageFile.FileName);
+            var fileEnding = Path.GetExtension(fileModel.ImageFile.FileName);
+
+            var container = _blobServiceClient.GetBlobContainerClient("images");
+            var filename = $"{metaItemId}/original-{Guid.NewGuid()}{fileEnding}";
+            var blobInstance = container.GetBlobClient(filename);
+            
+            var options = new BlobUploadOptions
+            {
+                Tags = new Dictionary<string, string>
+                {
+                    { "Sealed", "false" },
+                    { "Content", "image" },
+                    { "Date", "2020-04-20" }
+                }
+            };
+
             await blobInstance.UploadAsync(fileModel.ImageFile.OpenReadStream());
         }
         catch (Exception e)
@@ -32,7 +47,9 @@ public class ImageService : IImageService
     {
         try
         {
-            var container = _blobServiceClient.GetBlobContainerClient($"images/{metaItemId}");
+            var container = _blobServiceClient.GetBlobContainerClient("images");
+
+            var filename = $"{metaItemId}/original-{Guid.NewGuid()}.jpg";
             var blobInstance = container.GetBlobClient(id.ToString());
             var downloadContent = await blobInstance.DownloadAsync();
             return downloadContent.Value.Content;

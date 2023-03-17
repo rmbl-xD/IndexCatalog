@@ -43,7 +43,7 @@ public class ImageController : ControllerBase
         }
     }
     
-    [HttpPost]
+    [HttpPost("{metaItemId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Upload(Guid metaItemId, [FromForm] FileModel file)

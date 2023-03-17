@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using CatalogService.Models;
 using StackExchange.Redis;
 
 namespace CatalogService.Caching;
